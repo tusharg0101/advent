@@ -130,7 +130,8 @@ def get_score_strategy_moves(strategy):
 
 def main():
     # Day 1
-    input_calories = open('calories.txt','r').readlines()
+    calories_data = open('calories.txt','r')
+    input_calories = calories_data.readlines()
 
     # Task 1
     print(f"elf with most calories: {get_n_max_calories(input_calories, 1)}")
@@ -138,9 +139,11 @@ def main():
     # Task 2
     print(f"top 3 elves with most calories: {get_n_max_calories(input_calories, 3)}")
 
+    calories_data.close()
 
     # Day 2
-    strategy = open('strategies.txt','r').readlines()
+    strategy_data = open('strategies.txt','r')
+    strategy = strategy_data.readlines()
 
     # Task 3
     print(f"total score after all rounds: {get_score_literal_moves(strategy)}")
@@ -148,6 +151,7 @@ def main():
     # Task 4
     print(f"total score after playing moves according to strategy: {get_score_strategy_moves(strategy)}")
 
+    strategy_data.close()
     
 # Main function calling
 if __name__ == "__main__":
