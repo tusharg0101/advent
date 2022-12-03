@@ -128,7 +128,41 @@ def get_score_strategy_moves(strategy):
 
     return total_score
 
+def get_priority_sum_compartments(rucksack):
+
+    result = 0
+
+    for i in rucksack:
+        i = i.strip()
+        length = len(i)
+        first_compartment = set(i[: length//2 ]) 
+        second_compartment = set(i[length//2 : ])
+        misplaced_item = first_compartment.intersection(second_compartment).pop()
+        if misplaced_item.islower():
+            result += ord(misplaced_item) - 96
+        elif misplaced_item.isupper(): 
+            result += ord(misplaced_item) - 38
+
+    return result
+
+def get_priority_sum_badges(rucksack):
+    result = 0
+
+    for i in range(0, len(rucksack), 3):
+        first_elf = set(rucksack[i].strip())
+        second_elf = set(rucksack[i + 1].strip())
+        third_elf = set(rucksack[i + 2].strip())
+
+        badge = first_elf.intersection(second_elf)
+        badge = badge.intersection(third_elf).pop()
+        if badge.islower():
+            result += ord(badge) - 96
+        elif badge.isupper(): 
+            result += ord(badge) - 38
+    return result
+
 def main():
+    print("\nDay1")
     # Day 1
     calories_data = open('calories.txt','r')
     input_calories = calories_data.readlines()
@@ -141,6 +175,7 @@ def main():
 
     calories_data.close()
 
+    print("\nDay2")
     # Day 2
     strategy_data = open('strategies.txt','r')
     strategy = strategy_data.readlines()
@@ -153,6 +188,20 @@ def main():
 
     strategy_data.close()
     
+    print("\nDay3")
+    # Day 3
+    rucksack_data = open('rucksack.txt','r')
+    rucksack = rucksack_data.readlines()
+
+    # Task 4
+    print(f"sum of priorities of item types in both comparments: {get_priority_sum_compartments(rucksack)}")
+
+    # Task 5
+    print(f"sum of priorities of badges of 3-elf groups: {get_priority_sum_badges(rucksack)}")
+
+    rucksack_data.close()
+    print("\n")
+            
 # Main function calling
 if __name__ == "__main__":
     main()
