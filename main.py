@@ -1,6 +1,5 @@
 def get_elf_to_calories(input_calories):
     """
-    
     :param list input_calories : List of all calories in file separated by line
     :returns: elf_to_calories - dictionary mapping each elf to calories with them
     """
@@ -129,7 +128,6 @@ def get_score_strategy_moves(strategy):
     return total_score
 
 def get_priority_sum_compartments(rucksack):
-
     result = 0
 
     for i in rucksack:
@@ -159,6 +157,52 @@ def get_priority_sum_badges(rucksack):
             result += ord(badge) - 96
         elif badge.isupper(): 
             result += ord(badge) - 38
+    return result
+
+def get_fully_contain(clean_up):
+    result = 0
+    for i in clean_up: 
+        line = i.split(",")
+        first = line[0].split("-")
+        second = line[1].split("-")
+        start1 = int(first[0])
+        end1 = int(first[1])
+        start2 = int(second[0])
+        end2 =  int(second[1])
+        
+        if start1 <= start2 and end1 >= end2:
+            result += 1
+        
+        elif start1 >= start2 and end1 <= end2:
+            result += 1
+    return result
+
+def check_overlap(regions):
+    result = 0
+    start1, end1, start2, end2 = regions[0][0], regions[0][1], regions[1][0], regions[1][1]
+
+    if start1 <= start2 and end1 >= end2:
+            result += 1
+        
+    elif start1 >= start2 and end1 <= end2:
+        result += 1
+    
+    elif end1 >= start2 and end1 <= end2: 
+        result += 1
+    
+    elif end2 >= start1 and end2 <= end1: 
+        result += 1
+
+    return result
+
+def get_overlaps(clean_up):
+    result = 0
+    for i in clean_up: 
+        line = i.split(",")
+        first = line[0].split("-")
+        second = line[1].split("-")
+        regions = [[int(first[0]), int(first[1])], [int(second[0]), int(second[1])]]
+        result += check_overlap(regions)
     return result
 
 def main():
@@ -200,8 +244,20 @@ def main():
     print(f"sum of priorities of badges of 3-elf groups: {get_priority_sum_badges(rucksack)}")
 
     rucksack_data.close()
-    print("\n")
-            
+
+    print("\nDay4")
+    # Day 4
+    clean_up_data = open('clean_up.txt','r')
+    clean_up = clean_up_data.readlines()
+
+    # Task 4
+    print(f"total number of assignments that full contain the other: {get_fully_contain(clean_up)}")
+
+    # Task 5
+    print(f"total number of assignments that have overlap: {get_overlaps(clean_up)}")
+
+    clean_up_data.close()
+
 # Main function calling
 if __name__ == "__main__":
     main()
