@@ -177,25 +177,25 @@ def get_fully_contain(clean_up):
             result += 1
     return result
 
-def check_overlap(regions):
-    result = 0
-    start1, end1, start2, end2 = regions[0][0], regions[0][1], regions[1][0], regions[1][1]
+def get_overlaps(clean_up):
+    def check_overlap(regions):
+        result = 0
+        start1, end1, start2, end2 = regions[0][0], regions[0][1], regions[1][0], regions[1][1]
 
-    if start1 <= start2 and end1 >= end2:
+        if start1 <= start2 and end1 >= end2:
+                result += 1
+            
+        elif start1 >= start2 and end1 <= end2:
             result += 1
         
-    elif start1 >= start2 and end1 <= end2:
-        result += 1
-    
-    elif end1 >= start2 and end1 <= end2: 
-        result += 1
-    
-    elif end2 >= start1 and end2 <= end1: 
-        result += 1
+        elif end1 >= start2 and end1 <= end2: 
+            result += 1
+        
+        elif end2 >= start1 and end2 <= end1: 
+            result += 1
 
-    return result
+        return result
 
-def get_overlaps(clean_up):
     result = 0
     for i in clean_up: 
         line = i.split(",")
@@ -203,6 +203,52 @@ def get_overlaps(clean_up):
         second = line[1].split("-")
         regions = [[int(first[0]), int(first[1])], [int(second[0]), int(second[1])]]
         result += check_overlap(regions)
+    return result
+
+def get_top_crates(crates, same_order):
+    def process_crates_data(crates):
+
+        moves_start = 0
+        for i in range(len(crates)): 
+            if crates[i][1] == "1": 
+                moves_start = i + 2
+                break
+
+        num_stacks = len(crates[i])//4
+        result = {i:[] for i in range(1, num_stacks + 1)}
+
+        for line in crates:
+            line = line.replace("\n", "")
+            if line[1] == "1":
+                break
+            
+            for char in range(0, len(line), 4): 
+                crate_name = line[char + 1]
+                if crate_name != " ":
+                    result[char//4 + 1] += [crate_name]
+                    
+        for lis in result: 
+            result[lis] = [result[lis][i] for i in range((len(result[lis]) - 1), -1, -1)]
+
+        return result, moves_start
+    
+    result = ""
+    processed_crates, moves_start = process_crates_data(crates)
+    
+    for line in crates[moves_start: ]:
+        data = line.split()
+        move_num_crates = int(data[1])
+        from_stack_num = int(data[3])
+        to_stack_num = int(data[5])
+
+        to_move = processed_crates[from_stack_num][-move_num_crates:]
+        if not same_order: 
+            to_move.reverse()
+        processed_crates[to_stack_num] += to_move
+        processed_crates[from_stack_num] = processed_crates[from_stack_num][:-move_num_crates]
+    
+    for stack in processed_crates:
+        result += processed_crates[stack][-1]
     return result
 
 def main():
@@ -237,10 +283,10 @@ def main():
     rucksack_data = open('rucksack.txt','r')
     rucksack = rucksack_data.readlines()
 
-    # Task 4
+    # Task 5
     print(f"sum of priorities of item types in both comparments: {get_priority_sum_compartments(rucksack)}")
 
-    # Task 5
+    # Task 6
     print(f"sum of priorities of badges of 3-elf groups: {get_priority_sum_badges(rucksack)}")
 
     rucksack_data.close()
@@ -250,13 +296,26 @@ def main():
     clean_up_data = open('clean_up.txt','r')
     clean_up = clean_up_data.readlines()
 
-    # Task 4
+    # Task 7
     print(f"total number of assignments that full contain the other: {get_fully_contain(clean_up)}")
 
-    # Task 5
+    # Task 8
     print(f"total number of assignments that have overlap: {get_overlaps(clean_up)}")
 
     clean_up_data.close()
+
+    print("\nDay5")
+    # Day 5
+    crates_data = open('crates.txt','r')
+    crates = crates_data.readlines()
+
+    # Task 9
+    print(f"top crates after all procedures : {get_top_crates(crates, False)}")
+
+    # Task 10
+    print(f"top crates after all procedures with same_order movements : {get_top_crates(crates, True)}")
+
+    crates_data.close()
 
 # Main function calling
 if __name__ == "__main__":
