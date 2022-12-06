@@ -251,6 +251,35 @@ def get_top_crates(crates, same_order):
         result += processed_crates[stack][-1]
     return result
 
+def get_char_processed(signal, msg_or_pkt):
+    start = 0
+    end = 0
+    proc = []
+    signal = signal[0]
+    distincts = 0
+
+    if msg_or_pkt == 1:
+        distincts = 4
+    elif msg_or_pkt == 0:
+        distincts = 14
+    else: 
+        return -1
+
+    while start <= end and end < len(signal):
+        curr = signal[end]
+        if len(proc) == distincts:
+            return end
+        if curr not in proc:
+            proc.append(curr)
+            end += 1
+        else: 
+            id = proc.index(curr)
+            proc = proc[(id + 1):]
+            proc.append(curr)
+            start = end - id + 1
+            end += 1
+    return -1
+
 def main():
     print("\nDay1")
     # Day 1
@@ -316,6 +345,20 @@ def main():
     print(f"top crates after all procedures with same_order movements : {get_top_crates(crates, True)}")
 
     crates_data.close()
+
+    print("\nDay6")
+    # Day 6
+    signal_data = open('signal.txt','r')
+    signal = signal_data.readlines()
+
+    # Task 11
+    print(f"characters processed before first start-of-packet marker : {get_char_processed(signal, 1)}")
+
+    # Task 12
+    print(f"characters processed before first start-of-message marker : {get_char_processed(signal, 0)}")
+
+    signal_data.close()
+
 
 # Main function calling
 if __name__ == "__main__":
